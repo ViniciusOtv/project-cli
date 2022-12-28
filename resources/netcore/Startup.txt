@@ -1,0 +1,63 @@
+using [sln].Configurations;
+using [sln].Services;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace [sln]
+{
+    [ExcludeFromCodeCoverage]
+    public class Startup
+    {
+        public IConfiguration Configuration { get; }
+
+        public Startup(IConfiguration configuration) => Configuration = configuration;
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddApplicationInsightsTelemetry(Configuration.GetSection("ApplicationInsights:InstrumentationKey"));
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.ConfigurarDependencias(Configuration);
+            services.AddControllers();
+            services.ConfigurarSwagger(Configuration);
+            services.ConfigurarHealthChecks(Configuration);
+            services.ConfigurarLogs();
+            services.ConfigurarCosmosDb(Configuration).Wait();
+            services.ConfigurarPayPal(Configuration);
+            services.AddMvcCore().ConfigureApiBehaviorOptions(o => { o.SuppressModelStateInvalidFilter = true; }).AddApiExplorer().AddJsonOptions(opt => { opt.JsonSerializerOptions.IgnoreNullValues = true; });
+        }
+     
+       public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+                app.UseDeveloperExceptionPage();
+            else
+                app.UseHsts();
+
+            app.UtilizarManipulacaoDeErros();
+            app.UtilizarConfiguracaoSwagger();
+            app.UseHttpsRedirection();
+            app.UseRouting();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHealthChecks("/health", new HealthCheckOptions
+                {
+                    ResponseWriter = HealthCheckConfiguration.EditarResposta
+                });
+            });
+
+            RegistrarAssinaturasDeTopicos(app);
+        }
+     
+    }
+}

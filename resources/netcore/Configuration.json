@@ -1,0 +1,43 @@
+{
+	"APIsBaseAddress": "https://conectcar.visualstudio.com/",
+	"ReleaseManagerAPIsBaseAddress": "https://conectcar.vsrm.visualstudio.com/",
+	"TeamProject": "Financeiro",
+	"Solution": {
+		"GitRepository": "Denario.Archetype",
+		"Name": "Denario.Archetype",
+		"DevopsNickName": "DenarioArchetype",
+		"RootDir": "Denario.Archetype",
+		"ARMResourceType": "WebApp",
+		"HostingPlan": {
+			"Desenvolvimento": "dev-sp-Financeiro",
+			"QA": "qa-sp-Financeiro",
+			"Homologacao": "hmg-sp-Financeiro",
+			"Producao": "prd-sp-Financeiro",
+			"DR": "dr-sp-DisasterRecovery"
+		},
+		"AppInsights": {
+			"Name": {
+				"Desenvolvimento": "dev-appInsights",
+				"QA": "qa-appInsights",
+				"Homologacao": "ConectCarAPIs",
+				"Producao": "ConectCarAPIs",
+				"DR": "ConectCarAPIs-DR"
+			},
+			"Region": {
+				"Desenvolvimento": "westus2",
+				"QA": "westus2",
+				"Homologacao": "westus2",
+				"Producao": "westus2",
+				"DR": "southcentralus"
+			}
+		},
+		"EnvironmentVariables": {
+			"ConnectionsStrings": [
+				
+			],
+			"AppSettings": [
+				
+			]
+		}
+	}
+}
