@@ -1,0 +1,42 @@
+using [sln].Models.Responses;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Newtonsoft.Json;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace [sln].Configurations
+{
+    [ExcludeFromCodeCoverage]
+    public static class HealthCheckConfiguration
+    {
+        public static IServiceCollection ConfigurarHealthChecks(this IServiceCollection services, IConfiguration configuracao)
+        {
+            //Adicione aqui os serviços a serem checados 
+
+            return services;
+        }
+
+        public static Task EditarResposta(HttpContext context, HealthReport relatorio)
+        {
+            context.Response.ContentType = "application/json";
+
+            var resultado = new HealthCheckResponse
+            {
+                Status = relatorio.Status.ToString(),
+                Descricao = "",
+                Resultados = relatorio.Entries.Select(pair =>
+                    new HealthCheckResponse
+                    {
+                        Status = pair.Value.Status.ToString(),
+                        Descricao = pair.Key
+                    }).ToList()
+            };
+
+            return context.Response.WriteAsync(JsonConvert.SerializeObject(resultado));
+        }
+    }
+}

@@ -1,8 +1,8 @@
-﻿using GatewayPagamento.Api.Models;
+﻿using [sln].Models.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Polly.CircuitBreaker;
-using Serilog;
+using ILogger = Serilog.ILogger;
 using System;
 using System.Threading.Tasks;
 
@@ -12,7 +12,7 @@ namespace [sln].Controllers
     [Produces("application/json")]
     public class BaseController : ControllerBase
     {
-        private readonly string _prefixoLog = "GatewayPagamento.API -";
+        private readonly string _prefixoLog = "[sln] -";
 
         protected readonly ILogger _logger;
 

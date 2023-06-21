@@ -1,0 +1,25 @@
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace [sln].Configurations
+{
+    public static class TelemetriaConfiguration
+    {
+        public static void ConfigurarTelemetria(this IServiceCollection services, IConfiguration configuracao)
+        {
+            var configuracaoDaTelemetria = services.BuildServiceProvider().GetService<TelemetryConfiguration>();
+
+            if (configuracaoDaTelemetria == null)
+            {
+                configuracaoDaTelemetria = new TelemetryConfiguration();
+                configuracao.Bind("ApplicationInsights", configuracaoDaTelemetria);
+                configuracaoDaTelemetria.ConnectionString = configuracao.GetConnectionString("ApplicationInsights");
+            }
+
+            services.AddSingleton(configuracaoDaTelemetria);
+            services.AddSingleton(sp => new TelemetryClient(configuracaoDaTelemetria));
+        }
+    }
+}
