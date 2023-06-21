@@ -1,0 +1,21 @@
+using [sln].Services;
+using [sln].Services.Interfaces;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics.CodeAnalysis;
+
+namespace [sln].Configurations
+{
+    [ExcludeFromCodeCoverage]
+    public static class DependencyInjectionConfiguration
+    {
+        public static IServiceCollection ConfigurarDependencias(this IServiceCollection services, IConfiguration configuracao)
+        {
+            //Adicione aqui suas dependências
+
+            services.AddSingleton<ITelemetriaService, TelemetriaService>();
+
+            return services;
+        }
+    }
+}

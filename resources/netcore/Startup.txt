@@ -10,6 +10,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace [sln]
 {
@@ -23,15 +24,18 @@ namespace [sln]
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddApplicationInsightsTelemetry(Configuration.GetSection("ApplicationInsights:InstrumentationKey"));
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.ConfigurarDependencias(Configuration);
             services.AddControllers();
             services.ConfigurarSwagger(Configuration);
             services.ConfigurarHealthChecks(Configuration);
             services.ConfigurarLogs();
-            services.ConfigurarCosmosDb(Configuration).Wait();
-            services.ConfigurarPayPal(Configuration);
-            services.AddMvcCore().ConfigureApiBehaviorOptions(o => { o.SuppressModelStateInvalidFilter = true; }).AddApiExplorer().AddJsonOptions(opt => { opt.JsonSerializerOptions.IgnoreNullValues = true; });
+            services.AddMvcCore()
+                .ConfigureApiBehaviorOptions(o => {
+                    o.SuppressModelStateInvalidFilter = true;
+                }).AddApiExplorer()
+                .AddJsonOptions(opt => { 
+                    opt.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull; 
+                });
         }
      
        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -55,9 +59,6 @@ namespace [sln]
                     ResponseWriter = HealthCheckConfiguration.EditarResposta
                 });
             });
-
-            RegistrarAssinaturasDeTopicos(app);
         }
-     
     }
 }

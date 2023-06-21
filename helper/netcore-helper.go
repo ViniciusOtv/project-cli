@@ -37,6 +37,7 @@ func CreateNetCoreAPI(pathname string, solutionName string, repository string) {
 	copyNetCoreAPIFileToAPI(solutionName, pathname, fullName, repository)
 	createNetCoreTestProject(pathname, solutionName)
 	createNetCoreApplicationFolderStructure(pathname, solutionName)
+	installPackaDependencesToProject(pathname, solutionName)
 }
 
 func copyNetCoreAPIFileToAPI(solutionName string, pathname string, name string, repository string) {
@@ -48,25 +49,42 @@ func copyNetCoreAPIFileToAPI(solutionName string, pathname string, name string, 
 	copyFile(getNetCoreDefaultControllerFile(), applicationPath+"/Controllers/BaseController.cs")
 
 	createFolder(applicationPath + "/Configurations")
-	copyFile(getNetCoreSwaggerConfigurationFile(), applicationPath+"/Configurations/SwaggerConfiguration.cs")
+	copyListFile(getNetCoreConfigurationsFile(), applicationPath)
+
+	createFolder(applicationPath + "/Services")
+	copyFile(getNetCoreServiceFile(), applicationPath+"/Services/TelemetriaService.cs")
+
+	createFolder(applicationPath + "/Services/Interfaces")
+	copyFile(getNetCoreInterfaceFile(), applicationPath+"/Services/Interfaces/ITelemetriaService.cs")
+
+	createFolder(applicationPath + "/Models")
+	createFolder(applicationPath + "/Models/Responses")
+	copyFile(getNetCoreBaseResponseFile(), applicationPath+"/Models/Responses/BaseResponse.cs")
+	copyFile(getNetCoreHealthCheckResponseFile(), applicationPath+"/Models/Responses/HealthCheckResponse.cs")
 
 	programFile := pathname + "/" + solutionName + "/Program.cs"
 	startupFile := pathname + "/" + solutionName + "/Startup.cs"
 	baseController := pathname + "/" + solutionName + "/Controllers/BaseController.cs"
-	swaggerConfiguration := pathname + "/" + solutionName + "/Configurations/SwaggerConfiguration.cs"
+	telemetriaServiceFile := pathname + "/" + solutionName + "/Services/TelemetriaService.cs"
+	itelemetriaServiceInterfaceFile := pathname + "/" + solutionName + "/Services/Interfaces/ITelemetriaService.cs"
+	baseResponseFile := pathname + "/" + solutionName + "/Models/Responses/BaseResponse.cs"
+	HealthCheckResponseFile := pathname + "/" + solutionName + "/Models/Responses/HealthCheckResponse.cs"
 	csprojFile := pathname + "/" + solutionName + "/" + solutionName + ".csproj"
 
 	replaceWordInFile(programFile, "[sln]", solutionName)
 	replaceWordInFile(startupFile, "[sln]", solutionName)
 	replaceWordInFile(baseController, "[sln]", solutionName)
-	replaceWordInFile(swaggerConfiguration, "[sln]", solutionName)
+	replaceWordInFile(baseResponseFile, "[sln]", solutionName)
+	replaceWordInFile(HealthCheckResponseFile, "[sln]", solutionName)
+	replaceWordInFile(telemetriaServiceFile, "[sln]", solutionName)
+	replaceWordInFile(itelemetriaServiceInterfaceFile, "[sln]", solutionName)
+	replaceWordInConfigurationsFile(getNetCoreConfigurationsFile(), pathname, "[sln]", solutionName)
 	replaceWordInFile(csprojFile, "Microsoft.NET.Sdk", "Microsoft.NET.Sdk.Web")
 
 	pathbase := "/" + repository + "/" + strings.ToLower(strings.Replace(name, ".", "/", -1))
 	replaceWordInFile(startupFile, "[pathbase]", pathbase)
 
 	DeleteFile(applicationPath + "/Class1.cs")
-
 }
 
 func createNetCoreTestProject(pathname string, solutionName string) {
@@ -128,28 +146,47 @@ func addProjectToSlnProject(solutionName string, pathname string) {
 	}
 }
 
+func installPackaDependencesToProject(pathname string, solutionName string) {
+	redColor := color.New(color.FgRed).Add(color.Bold)
+	redColor.Println("Adding required packages to the project")
+
+	pkgList := []string{"AspNetCore.HealthChecks.CosmosDb", "AspNetCore.HealthChecks.SqlServer", "Azure.Messaging.ServiceBus",
+		"Microsoft.ApplicationInsights", "Microsoft.ApplicationInsights.AspNetCore", "Microsoft.Extensions.Configuration", "Microsoft.Extensions.Http.Polly",
+		"Microsoft.OpenApi", "Serilog", "Serilog.AspNetCore", "Serilog.Sinks.ApplicationInsights", "Serilog.Sinks.Console", "SonarAnalyzer.CSharp", "Swashbuckle.AspNetCore"}
+
+	for _, nugetPkg := range pkgList {
+		redColor.Println("Adding package " + nugetPkg)
+
+		applicationPath := pathname + "/" + solutionName
+		strCommand := "dotnet add package " + nugetPkg
+		fmt.Println(strCommand)
+		command := exec.Command("dotnet", "add", "package", nugetPkg)
+		command.Dir = applicationPath
+
+		err := command.Run()
+		if err != nil {
+			redColor.Println("Error when trying to add "+nugetPkg+" a solução ", err)
+			os.Exit(0)
+		}
+	}
+}
+
 func createNetCoreApplicationFolderStructure(pathname string, solutionName string) {
 
 	applicationPath := pathname + "/" + solutionName
 	repositoryPath := applicationPath + "/" + "Repositories"
 	modelInternalPath := applicationPath + "/" + "Models"
-	servicePath := applicationPath + "/" + "Services"
 
 	createFolder(applicationPath + "/" + "Enums")
 	createFolder(applicationPath + "/" + "Extensions")
 	createFolder(applicationPath + "/" + "Mappers")
-	createFolder(applicationPath + "/" + "Models")
 	createFolder(modelInternalPath + "/" + "Dtos")
 	createFolder(applicationPath + "/" + "Repositories")
 	createFolder(applicationPath + "/" + "Entities")
 	createFolder(applicationPath + "/" + "Requests")
-	createFolder(applicationPath + "/" + "Responses")
 	createFolder(repositoryPath + "/" + "Interfaces")
-	createFolder(applicationPath + "/" + "Services")
-	createFolder(servicePath + "/" + "Interfaces")
 	createFolder(applicationPath + "/" + "Utils")
 	createFolder(applicationPath + "/" + "Validations")
-
 }
 
 func CopyNetCoreFiles(localRepository string) {
