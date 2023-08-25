@@ -13,7 +13,6 @@ import (
 func CreateNetCoreSolution(pathName string, solutionName string) {
 
 	redColor := color.New(color.FgRed).Add(color.Bold)
-
 	redColor.Println("Creatting NetCore Solution ")
 
 	strCommand := "dotnet new sln -n " + solutionName
@@ -45,20 +44,20 @@ func copyNetCoreAPIFileToAPI(solutionName string, pathname string, name string, 
 	copyFile(getNetCoreProgramFile(), applicationPath+"/Program.cs")
 	copyFile(getNetCoreStartupFile(), applicationPath+"/Startup.cs")
 
-	createFolder(applicationPath + "/Controllers")
+	CreateFolder(applicationPath + "/Controllers")
 	copyFile(getNetCoreDefaultControllerFile(), applicationPath+"/Controllers/BaseController.cs")
 
-	createFolder(applicationPath + "/Configurations")
+	CreateFolder(applicationPath + "/Configurations")
 	copyListFile(getNetCoreConfigurationsFile(), applicationPath)
 
-	createFolder(applicationPath + "/Services")
+	CreateFolder(applicationPath + "/Services")
 	copyFile(getNetCoreServiceFile(), applicationPath+"/Services/TelemetriaService.cs")
 
-	createFolder(applicationPath + "/Services/Interfaces")
+	CreateFolder(applicationPath + "/Services/Interfaces")
 	copyFile(getNetCoreInterfaceFile(), applicationPath+"/Services/Interfaces/ITelemetriaService.cs")
 
-	createFolder(applicationPath + "/Models")
-	createFolder(applicationPath + "/Models/Responses")
+	CreateFolder(applicationPath + "/Models")
+	CreateFolder(applicationPath + "/Models/Responses")
 	copyFile(getNetCoreBaseResponseFile(), applicationPath+"/Models/Responses/BaseResponse.cs")
 	copyFile(getNetCoreHealthCheckResponseFile(), applicationPath+"/Models/Responses/HealthCheckResponse.cs")
 
@@ -177,16 +176,16 @@ func createNetCoreApplicationFolderStructure(pathname string, solutionName strin
 	repositoryPath := applicationPath + "/" + "Repositories"
 	modelInternalPath := applicationPath + "/" + "Models"
 
-	createFolder(applicationPath + "/" + "Enums")
-	createFolder(applicationPath + "/" + "Extensions")
-	createFolder(applicationPath + "/" + "Mappers")
-	createFolder(modelInternalPath + "/" + "Dtos")
-	createFolder(applicationPath + "/" + "Repositories")
-	createFolder(applicationPath + "/" + "Entities")
-	createFolder(applicationPath + "/" + "Requests")
-	createFolder(repositoryPath + "/" + "Interfaces")
-	createFolder(applicationPath + "/" + "Utils")
-	createFolder(applicationPath + "/" + "Validations")
+	CreateFolder(applicationPath + "/" + "Enums")
+	CreateFolder(applicationPath + "/" + "Extensions")
+	CreateFolder(applicationPath + "/" + "Mappers")
+	CreateFolder(modelInternalPath + "/" + "Dtos")
+	CreateFolder(applicationPath + "/" + "Repositories")
+	CreateFolder(applicationPath + "/" + "Entities")
+	CreateFolder(applicationPath + "/" + "Requests")
+	CreateFolder(repositoryPath + "/" + "Interfaces")
+	CreateFolder(applicationPath + "/" + "Utils")
+	CreateFolder(applicationPath + "/" + "Validations")
 }
 
 func CopyNetCoreFiles(localRepository string) {

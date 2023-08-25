@@ -42,21 +42,17 @@ var createCmd = &cobra.Command{
 		fmt.Println("")
 		gitRepository := sv.CreateRepository(repositoryName)
 
-		redColor.Println("O gitrepository é + ", gitRepository)
-
 		fmt.Println("")
 		repository := gitRepository.WebURL
 
 		redColor.Printf(repository)
-
-		redColor.Printf("Passou por aqui")
 
 		if hp.IsWindowsSystem() {
 			repository = gitRepository.WebURL
 		}
 
 		if !hp.CloneRepository(repository) {
-			redColor.Printf("erro ao clonar repositório")
+			redColor.Printf("error when cloning repository")
 			os.Exit(0)
 		}
 

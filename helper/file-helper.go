@@ -71,7 +71,7 @@ func DeleteFile(path string) {
 	}
 }
 
-func createFolder(pathname string) {
+func CreateFolder(pathname string) {
 	err := os.Mkdir(pathname, 0755)
 	if err != nil {
 		fmt.Println("Error when trying to create current directory", err)
